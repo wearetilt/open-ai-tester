@@ -39,8 +39,6 @@ const getResponseFromOpenAI = async () => {
         className={styles.promptInput}
         placeholder="Enter a prompt"
         onChange={(e) => setPrompt(e.target.value)}
-        row="5"
-        cols="50"
       />
       <button className={styles.button} onClick={getResponseFromOpenAI}>
         Ask your question
