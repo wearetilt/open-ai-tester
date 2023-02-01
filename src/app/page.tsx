@@ -1,91 +1,59 @@
-import Image from 'next/image'
+'use client'
+import { createContext, useEffect, useState } from 'react'
 import { Inter } from '@next/font/google'
 import styles from './page.module.css'
 
-const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+
+  const [prompt, setPrompt] = useState("");
+const [isLoading, setIsLoading] = useState(false);
+const [response, setResponse] = useState("");
+
+const getResponseFromOpenAI = async () => {
+  setResponse("");
+  console.log("Getting response from OpenAI...");
+  setIsLoading(true);
+  const response = await fetch("/api/openai", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ prompt: prompt }),
+  });
+
+  const data = await response.json();
+  setIsLoading(false);
+  console.log(data.text);
+  setResponse(data.text);
+};
+
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <div className={styles.description}>
+      <h1 className={styles.title}>Ask Tilt AI a question...</h1>
+    </div>
+
+    <div className={styles.center}>
+      <textarea
+        className={styles.promptInput}
+        placeholder="Enter a prompt"
+        onChange={(e) => setPrompt(e.target.value)}
+        row="5"
+        cols="50"
+      />
+      <button className={styles.button} onClick={getResponseFromOpenAI}>
+        Ask your question
+      </button>
+
+      <div className={styles.response}>
+        {isLoading ? (
+          <div>Accessing the Tiltorithm</div>
+        ) : (
+          <div>{response}</div>
+        )}
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
-        </div>
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </div>
+  </main>
   )
 }
