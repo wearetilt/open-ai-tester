@@ -1,7 +1,7 @@
 const { Configuration, OpenAIApi } = require("openai");
 
 const configuration = new Configuration({
-  apiKey: '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',
+  apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
 });
 
 
@@ -10,7 +10,7 @@ const openai = new OpenAIApi(configuration);
 
 
 
-export default async (req, res) => {
+export default async (req: any, res: any) => {
   if (req.body.prompt !== undefined) {
     const response = await openai.createImage({
       // prompt: "photo realistic image of a pixar style cat in a field of poppies and a dog in the distance",
